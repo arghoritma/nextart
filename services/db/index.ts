@@ -6,7 +6,7 @@ import { files } from "./schema/files";
 
 // Koneksi ke Turso
 const client = createClient({
-  url: process.env.TURSO_CONNECTION_URL!,
+  url: process.env.TURSO_DATABASE_URL!,
   authToken: process.env.TURSO_AUTH_TOKEN!,
 });
 
