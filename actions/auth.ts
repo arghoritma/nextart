@@ -1,10 +1,11 @@
 "use server";
 
-import { SignupFormSchema, FormState } from "@/lib/definitions"; //
-import { generateUUID } from "@/lib/helper"; //
-import db from "@/services/db"; //
+import { SignupFormSchema, FormState } from "@/libs/definitions"; //
+import { generateUUID } from "@/libs/helper"; //
+import {db, users} from "@/services/db"; //
+import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt"; //
-import { createSession, deleteSession } from "@/lib/session"; //
+import { createSession, deleteSession } from "@/libs/sessions"; //
 import { redirect } from "next/navigation";
 
 export async function signup(
@@ -16,6 +17,7 @@ export async function signup(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+   
   });
 
   // If any form fields are invalid, return early
@@ -30,7 +32,7 @@ export async function signup(
     console.log("name", name);
 
     // Check if email already exists
-    const existingUser = await db("users").where({ email }).first();
+    const existingUser = await db.select().from(users).where(eq(users.email, email)).get();
     if (existingUser) {
       console.log("Email already exists");
       return {
@@ -45,14 +47,13 @@ export async function signup(
 
     // Use transaction for atomic operation
     await db.transaction(async (trx) => {
-      await trx("users").insert({
+      await trx.insert(users).values({
         id: userId,
         email: email,
         name: name,
-        password: await bcrypt.hash(password, 10),
+        password_hash: await bcrypt.hash(password, 10),
         created_at: new Date(),
         updated_at: new Date(),
-        role: "user",
       });
     });
 
@@ -88,6 +89,7 @@ export async function signup(
   }
 }
 
+
 export async function signin(
   prev: FormState,
   formData: FormData
@@ -107,7 +109,7 @@ export async function signin(
 
   try {
     // Find user by email
-    const user = await db("users").where({ email }).first();
+    const user = await db.select().from(users).where(eq(users.email, email)).get();
 
     // If user not found
     if (!user) {
@@ -119,7 +121,7 @@ export async function signin(
     }
 
     // Compare passwords
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
     // If password doesn't match
     if (!passwordMatch) {
@@ -144,14 +146,14 @@ export async function signin(
 export async function googleSignin(payload: any) {
   const { email, name, uid, Avatar } = payload;
   try {
-    const existingUser = await db("users").where({ email }).first();
+    const existingUser = await db.select().from(users).where(eq(users.email, email)).get();
 
     if (!existingUser) {
-      await db("users").insert({
+      await db.insert(users).values({
         id: uid,
         email,
         name: name,
-        password_has: uid,
+        password_hash: uid,
         created_at: new Date(),
         updated_at: new Date(),
         avatar: Avatar,
@@ -168,6 +170,7 @@ export async function googleSignin(payload: any) {
     };
   }
 }
+
 
 export async function logout() {
   deleteSession();
