@@ -2,10 +2,11 @@ import { useState } from "react";
 import { auth } from "@/services/firebaseConfig";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { googleSignin } from "@/actions/auth";
+import { GoogleSigninPayload } from "@/types";
 
 export function useGoogleAuth() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string[]>([]);
 
   const googleLogin = async () => {
     setLoading(true);
@@ -22,9 +23,13 @@ export function useGoogleAuth() {
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa6YvRump6DC1zR3Bu5fz9358Gcgviuu5nag&s",
       };
 
-      await googleSignin(payload);
-    } catch (error : {message: string}) {
-      setError(error.message);
+      await googleSignin(payload as GoogleSigninPayload);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError([error.message]);
+      } else {
+        setError(['An unknown error occurred']);
+      }
     } finally {
       setLoading(false);
     }

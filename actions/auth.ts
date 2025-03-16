@@ -2,11 +2,12 @@
 
 import { SignupFormSchema, FormState } from "@/libs/definitions"; //
 import { generateUUID } from "@/libs/helper"; //
-import {db, users} from "@/services/db"; //
+import { db, users } from "@/services/db"; //
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt"; //
 import { createSession, deleteSession } from "@/libs/sessions"; //
 import { redirect } from "next/navigation";
+import { GoogleSigninPayload } from "@/types";
 
 export async function signup(
   prev: FormState,
@@ -17,7 +18,6 @@ export async function signup(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
-   
   });
 
   // If any form fields are invalid, return early
@@ -32,7 +32,11 @@ export async function signup(
     console.log("name", name);
 
     // Check if email already exists
-    const existingUser = await db.select().from(users).where(eq(users.email, email)).get();
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .get();
     if (existingUser) {
       console.log("Email already exists");
       return {
@@ -89,7 +93,6 @@ export async function signup(
   }
 }
 
-
 export async function signin(
   prev: FormState,
   formData: FormData
@@ -109,7 +112,11 @@ export async function signin(
 
   try {
     // Find user by email
-    const user = await db.select().from(users).where(eq(users.email, email)).get();
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .get();
 
     // If user not found
     if (!user) {
@@ -135,6 +142,7 @@ export async function signin(
     await createSession(user.id);
     redirect("/dashboard");
   } catch (error) {
+    console.error("Error during sign in:", error);
     return {
       errors: {
         _form: ["An error occurred during sign in. Please try again."],
@@ -143,10 +151,14 @@ export async function signin(
   }
 }
 
-export async function googleSignin(payload: any) {
+export async function googleSignin(payload: GoogleSigninPayload) {
   const { email, name, uid, Avatar } = payload;
   try {
-    const existingUser = await db.select().from(users).where(eq(users.email, email)).get();
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .get();
 
     if (!existingUser) {
       await db.insert(users).values({
@@ -170,7 +182,6 @@ export async function googleSignin(payload: any) {
     };
   }
 }
-
 
 export async function logout() {
   deleteSession();

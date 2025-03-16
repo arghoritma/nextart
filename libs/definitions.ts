@@ -9,7 +9,7 @@ export const SignupFormSchema = z.object({
   password: z
     .string()
     .min(8, { message: "Be at least 8 characters long" })
-    .trim(),  
+    .trim(),
   phone: z
     .string()
     .regex(/^\d+$/, { message: "Phone number must contain only numbers." })
@@ -44,4 +44,11 @@ export type ProfileResponse = {
   errors?: {
     _form?: string[];
   };
+};
+
+export type UserProp = {
+  name: string;
+  email: string;
+  phone: string | null;
+  avatar: string | null;
 };
