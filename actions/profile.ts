@@ -85,21 +85,37 @@ export async function getProfile(): Promise<{
     };
   }
 }
-
-export async function getAvatar(): Promise<{success:boolean, data:string, error: boolean}> {
-  const session = verifySession()
+export async function getAvatar(): Promise<{
+  success: boolean;
+  data: string;
+  error: boolean;
+}> {
+  const session = await verifySession();
   if (!session.isAuth) {
     return {
       success: false,
-      data:"unAuthorized",
-      error: true
-    }
+      data: "unAuthorized",
+      error: true,
+    };
   }
-  
-  const avatar = await db.from(users).select("avatar").where(eq(users.id, session. userId))
-  return {
-    success: true,
-    data: avatar,
-    error: false
+
+  try {
+    const avatar = await db
+      .select({ avatar: users.avatar })
+      .from(users)
+      .where(eq(users.id, session.userId as string))
+      .get();
+
+    return {
+      success: true,
+      data: avatar?.avatar || "",
+      error: false,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      data: error as string,
+      error: true,
+    };
   }
 }

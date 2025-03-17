@@ -8,11 +8,12 @@ import React, {
   startTransition,
 } from "react";
 import { Camera, User, Upload } from "lucide-react";
-import { getProfile } from "@/actions/profile";
+import { getAvatar } from "@/actions/profile";
 import { uploadAvatar } from "@/actions/uploads";
 
 export default function ProfilePhoto() {
   const [avatar, setAvatar] = useState("");
+  const [selectedFile, setSelectedFile] = useState("");
   const initialState = {
     success: false,
     data: "null",
@@ -23,22 +24,29 @@ export default function ProfilePhoto() {
     initialState
   );
 
+  const getUserData = async () => {
+    try {
+      const avatar = await getAvatar();
+
+      if (avatar.success) {
+        setAvatar(avatar.data || "");
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+  };
+
   useEffect(() => {
     startTransition(() => {
-      const getUserData = async () => {
-        try {
-          const profile = await getProfile();
-
-          if (profile) {
-            setAvatar(profile.data.avatar || "");
-          }
-        } catch (error) {
-          console.error("Error fetching profile:", error);
-        }
-      };
       getUserData();
     });
   }, []);
+
+  useEffect(() => {
+    if (state.success) {
+      getUserData();
+    }
+  }, [state]);
 
   return (
     <div className="w-full lg:w-1/3 flex items-center align-middle justify-center">
@@ -55,6 +63,9 @@ export default function ProfilePhoto() {
           </div>
         </div>
         {state.error && <div className="text-error mt-2">{state.data}</div>}
+        {selectedFile && (
+          <div className="mt-2">Selected file: {selectedFile}</div>
+        )}
         <form action={formAction} className="flex gap-2">
           <label
             htmlFor="image-upload"
@@ -70,6 +81,7 @@ export default function ProfilePhoto() {
               disabled={isUploading}
               onChange={(e) => {
                 if (e.target.files && e.target.files.length > 0) {
+                  setSelectedFile(e.target.files[0].name);
                   console.log(e.target.files[0]);
                 }
               }}

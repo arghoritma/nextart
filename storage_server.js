@@ -1,6 +1,7 @@
-import { start } from "live-server";
-import { config } from "dotenv";
-config();
+/* eslint-disable @typescript-eslint/no-require-imports */
+var liveServer = require("live-server");
+var dotenv = require("dotenv");
+dotenv.config();
 
 var params = {
   port: process.env.STORAGE_PORT || 8080,
@@ -12,4 +13,4 @@ var params = {
   logLevel: 2,
 };
 
-start(params);
+liveServer.start(params);
