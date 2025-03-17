@@ -1,50 +1,45 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Camera, User } from "lucide-react";
+import React, {
+  useActionState,
+  useEffect,
+  useState,
+  startTransition,
+} from "react";
+import { Camera, User, Upload } from "lucide-react";
 import { getProfile } from "@/actions/profile";
+import { uploadAvatar } from "@/actions/uploads";
 
 export default function ProfilePhoto() {
   const [avatar, setAvatar] = useState("");
+  const initialState = {
+    success: false,
+    data: "null",
+    error: true,
+  };
+  const [state, formAction, isUploading] = useActionState(
+    uploadAvatar,
+    initialState
+  );
 
   useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const profile = await getProfile();
+    startTransition(() => {
+      const getUserData = async () => {
+        try {
+          const profile = await getProfile();
 
-        if (profile) {
-          setAvatar(profile.data.avatar || "");
+          if (profile) {
+            setAvatar(profile.data.avatar || "");
+          }
+        } catch (error) {
+          console.error("Error fetching profile:", error);
         }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-    getUserData();
+      };
+      getUserData();
+    });
   }, []);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const response = await fetch("/api/users/avatar", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) throw new Error("Failed to upload avatar");
-
-        const data = await response.json();
-
-        setAvatar(data.url);
-      } catch (error) {
-        console.error("Error uploading avatar:", error);
-      }
-    }
-  };
   return (
     <div className="w-full lg:w-1/3 flex items-center align-middle justify-center">
       <div className="flex flex-col items-center bg-base-200 p-4 sm:p-8 rounded-xl">
@@ -59,20 +54,35 @@ export default function ProfilePhoto() {
             )}
           </div>
         </div>
-        <label
-          htmlFor="image-upload"
-          className="btn btn-primary mt-4 sm:mt-6 gap-2 hover:btn-secondary transition-colors text-sm sm:text-base w-full sm:w-auto"
-        >
-          <Camera className="h-4 sm:h-5 w-4 sm:w-5" />
-
-          <input
-            id="image-upload"
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </label>
+        {state.error && <div className="text-error mt-2">{state.data}</div>}
+        <form action={formAction} className="flex gap-2">
+          <label
+            htmlFor="image-upload"
+            className="btn btn-primary mt-4 sm:mt-6 gap-2 hover:btn-secondary transition-colors text-sm sm:text-base"
+          >
+            <Camera className="h-4 sm:h-5 w-4 sm:w-5" />
+            <input
+              id="image-upload"
+              name="file"
+              type="file"
+              className="hidden"
+              accept="image/*"
+              disabled={isUploading}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  console.log(e.target.files[0]);
+                }
+              }}
+            />
+          </label>
+          <button
+            type="submit"
+            className="btn btn-primary mt-4 sm:mt-6 gap-2 hover:btn-secondary transition-colors"
+            disabled={isUploading}
+          >
+            <Upload className="h-4 sm:h-5 w-4 sm:w-5" />
+          </button>
+        </form>
       </div>
     </div>
   );
