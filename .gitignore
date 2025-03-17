@@ -40,6 +40,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+
+# firebase config
+@services/firebaseConfig.ts
+
+
 storage/
 
 key
+db

@@ -1,16 +1,12 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
 import { users } from "./schema/users";
 import { sessions } from "./schema/sessions";
 import { files } from "./schema/files";
 
-// Koneksi ke Turso
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!,
-});
-
-export const db = drizzle(client, { schema: { users, sessions, files } });
+const path_db = process.env.DATABASE_PATH!;
+const sqlite = new Database(`${path_db}/database.db`);
+export const db = drizzle(sqlite, { schema: { users, sessions, files } });
 
 // Eksport skema
 export * from "./schema/users";
