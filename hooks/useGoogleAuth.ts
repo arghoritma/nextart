@@ -28,7 +28,7 @@ export function useGoogleAuth() {
       if (error instanceof Error) {
         setError([error.message]);
       } else {
-        setError(['An unknown error occurred']);
+        setError(["An unknown error occurred"]);
       }
     } finally {
       setLoading(false);

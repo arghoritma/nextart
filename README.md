@@ -8,10 +8,13 @@ This is a modern web template that can be used for various purposes and applicat
 - React 19
 - TypeScript
 - DrizzleORM
-- LibSQL
+- better-sqlite3
 - TailwindCSS
+- DaisyUI
+- Firebase
 - JWT Authentication (jose)
 - bcrypt for password hashing
+- UUID
 
 ## Getting Started
 
@@ -29,10 +32,11 @@ This project uses Turso as the database. Set up the following environment variab
 
 ```env
 NODE_ENV=development
-TURSO_DATABASE_URL=<your-turso-database-url>
-TURSO_AUTH_TOKEN=<your-turso-auth-token>
-```
 
+
+TURSO_DATABASE_URL=libsql://nextart-bigzero55.turso.io
+TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NDE2Nzk1MTEsImlkIjoiZWU1MTYxZjItZTU3ZC00ZTNmLThjN2QtN2EzYTg0ZTI3YmI1In0.-v1fqi5RMxhDzAtJTj9a_IYiSEzJgS162Ns-n8vECMpwhsnoW-r9Zynk2xGJxiViH8SnPAbYF7QtgYYzLtNQAQ
+```
 ## Database Migrations
 
 To manage database migrations:
@@ -57,8 +61,9 @@ You can start editing the pages by modifying files in the `app` directory. The p
 - Modern development with Turbopack
 - Type safety with TypeScript
 - Database ORM with DrizzleORM
-- Secure authentication system
-- Responsive UI with TailwindCSS
+- Secure authentication system with Firebase
+- Responsive UI with TailwindCSS and DaisyUI
+- Data validation with Zod
 
 ## Learn More
 
