@@ -85,3 +85,21 @@ export async function getProfile(): Promise<{
     };
   }
 }
+
+export async function getAvatar(): Promise<{success:boolean, data:string, error: boolean}> {
+  const session = verifySession()
+  if (!session.isAuth) {
+    return {
+      success: false,
+      data:"unAuthorized",
+      error: true
+    }
+  }
+  
+  const avatar = await db.from(users).select("avatar").where(eq(users.id, session. userId))
+  return {
+    success: true,
+    data: avatar,
+    error: false
+  }
+}
