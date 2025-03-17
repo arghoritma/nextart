@@ -32,11 +32,19 @@ This project uses Turso as the database. Set up the following environment variab
 
 ```env
 NODE_ENV=development
+SESSION_SECRET=nextart
 
+DATABASE_PATH=./db
 
-TURSO_DATABASE_URL=libsql://nextart-bigzero55.turso.io
-TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NDE2Nzk1MTEsImlkIjoiZWU1MTYxZjItZTU3ZC00ZTNmLThjN2QtN2EzYTg0ZTI3YmI1In0.-v1fqi5RMxhDzAtJTj9a_IYiSEzJgS162Ns-n8vECMpwhsnoW-r9Zynk2xGJxiViH8SnPAbYF7QtgYYzLtNQAQ
+FRONTEND_URL=http://localhost:3000
+GEMINI_API_KEY=
+
+STORAGE_ROOT=./storage
+STORAGE_HOST=localhost
+STORAGE_PORT=3001
+STORAGE_URL=http://localhost:3001
 ```
+
 ## Database Migrations
 
 To manage database migrations:
