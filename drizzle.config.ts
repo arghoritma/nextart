@@ -4,9 +4,9 @@ import "dotenv/config";
 export default defineConfig({
   out: "./services/db/migrations",
   schema: "./services/db/schema/*.ts",
-  dialect: "sqlite",
+  dialect: "mysql",
   dbCredentials: {
-    url: `${process.env.DATABASE_PATH}/database.db`,
+    url: process.env.DATABASE_URL!
   },
   verbose: true,
 });

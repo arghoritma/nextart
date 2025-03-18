@@ -1,14 +1,14 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/mysql2";
 import { users } from "./schema/users";
 import { sessions } from "./schema/sessions";
 import { files } from "./schema/files";
 
-const path_db = process.env.DATABASE_PATH!;
-const sqlite = new Database(`${path_db}/database.db`);
-export const db = drizzle(sqlite, { schema: { users, sessions, files } });
+export const db = drizzle(process.env.DATABASE_URL!, {
+  mode: "default",
+  schema: { users, sessions, files },
+});
 
-// Eksport skema
 export * from "./schema/users";
 export * from "./schema/sessions";
 export * from "./schema/files";

@@ -1,15 +1,15 @@
 import { sql } from "drizzle-orm";
-import { text, sqliteTable, integer } from "drizzle-orm/sqlite-core";
+import { varchar, mysqlTable, timestamp } from "drizzle-orm/mysql-core";
 
-export const users = sqliteTable("users", {
-  id: text("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  name: text("name").notNull(),
-  phone: text("phone"),
-  password_hash: text("password_hash").notNull(),
-  avatar: text("avatar"),
-  created_at: integer("created_at", { mode: "timestamp" })
+export const users = mysqlTable("users", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  password_hash: varchar("password_hash", { length: 255 }).notNull(),
+  avatar: varchar("avatar", { length: 255 }),
+  created_at: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updated_at: integer("updated_at", { mode: "timestamp" }),
+  updated_at: timestamp("updated_at"),
 });

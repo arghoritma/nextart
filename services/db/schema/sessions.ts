@@ -1,22 +1,22 @@
 import { sql } from "drizzle-orm";
-import { text, sqliteTable, integer } from "drizzle-orm/sqlite-core";
+import { varchar, mysqlTable, timestamp, tinyint } from "drizzle-orm/mysql-core";
 import { users } from "./users";
 
-export const sessions = sqliteTable("sessions", {
-  id: text("id").primaryKey(),
-  user_id: text("user_id")
+export const sessions = mysqlTable("sessions", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  user_id: varchar("user_id", { length: 255 })
     .notNull()
     .references(() => users.id),
-  token: text("token").notNull(),
-  device: text("device"),
-  ip_address: text("ip_address"),
-  user_agent: text("user_agent"),
-  is_active: integer("is_active").default(1),
-  created_at: integer("created_at", { mode: "timestamp" })
+  token: varchar("token", { length: 255 }).notNull(),
+  device: varchar("device", { length: 255 }),
+  ip_address: varchar("ip_address", { length: 45 }),
+  user_agent: varchar("user_agent", { length: 255 }),
+  is_active: tinyint("is_active").default(1),
+  created_at: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  last_accessed: integer("last_accessed", { mode: "timestamp" })
+  last_accessed: timestamp("last_accessed")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  expires_at: integer("expires_at", { mode: "timestamp" }).notNull(),
+  expires_at: timestamp("expires_at").notNull(),
 });
