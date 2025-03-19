@@ -36,8 +36,8 @@ export async function signup(
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .get();
-    if (existingUser) {
+      .execute();
+    if (existingUser.length > 0) {
       console.log("Email already exists");
       return {
         errors: {
@@ -116,10 +116,10 @@ export async function signin(
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .get();
+      .execute();
 
     // If user not found
-    if (!user) {
+    if (!user || user.length === 0) {
       return {
         errors: {
           _form: ["User not found"],
@@ -128,7 +128,7 @@ export async function signin(
     }
 
     // Compare passwords
-    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    const passwordMatch = await bcrypt.compare(password, user[0].password_hash);
 
     // If password doesn't match
     if (!passwordMatch) {
@@ -139,7 +139,7 @@ export async function signin(
       };
     }
 
-    await createSession(user.id);
+    await createSession(user[0].id);
     redirect("/dashboard");
   } catch (error) {
     console.error("Error during sign in:", error);
@@ -158,9 +158,9 @@ export async function googleSignin(payload: GoogleSigninPayload) {
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .get();
+      .execute();
 
-    if (!existingUser) {
+    if (!existingUser || existingUser.length === 0) {
       await db.insert(users).values({
         id: uid,
         email,

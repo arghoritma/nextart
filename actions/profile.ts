@@ -36,7 +36,8 @@ export async function updateProfile(
     await db
       .update(users)
       .set(updateData)
-      .where(eq(users.id, session.userId as string));
+      .where(eq(users.id, session.userId as string))
+      .execute();
 
     revalidatePath("/dashboard/profile");
     return {
@@ -69,13 +70,13 @@ export async function getProfile(): Promise<{
       })
       .from(users)
       .where(eq(users.id, session.userId as string))
-      .get();
+      .execute();
 
-    if (!user) {
+    if (!user[0]) {
       throw new Error("User not found");
     }
 
-    return { success: true, data: user, error: null };
+    return { success: true, data: user[0], error: null };
   } catch (error) {
     return {
       success: false,
@@ -85,6 +86,7 @@ export async function getProfile(): Promise<{
     };
   }
 }
+
 export async function getAvatar(): Promise<{
   success: boolean;
   data: string;
@@ -104,11 +106,11 @@ export async function getAvatar(): Promise<{
       .select({ avatar: users.avatar })
       .from(users)
       .where(eq(users.id, session.userId as string))
-      .get();
+      .execute();
 
     return {
       success: true,
-      data: avatar?.avatar || "",
+      data: avatar[0]?.avatar || "",
       error: false,
     };
   } catch (error) {

@@ -8,7 +8,10 @@ export const files = mysqlTable("files", {
   file_url: varchar("file_url", { length: 255 }).notNull(),
   uploaded_by: varchar("uploaded_by", { length: 255 })
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, {
+      onDelete: "no action",
+      onUpdate: "no action",
+    }),
   uploaded_at: timestamp("uploaded_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

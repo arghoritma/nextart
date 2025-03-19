@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "ea70d7fb-7462-4e62-89ad-9212f325cdc8",
+  "id": "a6cd4120-e6e8-450c-a09c-f84c839ae301",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "files": {
@@ -145,7 +145,8 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {},
@@ -232,8 +233,10 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {},
@@ -246,14 +249,7 @@
           ]
         }
       },
-      "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "columns": [
-            "email"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "checkConstraint": {}
     }
   },

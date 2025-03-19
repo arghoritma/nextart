@@ -1,5 +1,10 @@
 import { sql } from "drizzle-orm";
-import { varchar, mysqlTable, timestamp, tinyint } from "drizzle-orm/mysql-core";
+import {
+  varchar,
+  mysqlTable,
+  timestamp,
+  tinyint,
+} from "drizzle-orm/mysql-core";
 import { users } from "./users";
 
 export const sessions = mysqlTable("sessions", {
@@ -18,5 +23,7 @@ export const sessions = mysqlTable("sessions", {
   last_accessed: timestamp("last_accessed")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  expires_at: timestamp("expires_at").notNull(),
+  expires_at: timestamp("expires_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });
