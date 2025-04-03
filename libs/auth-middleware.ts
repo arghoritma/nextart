@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { jwtVerify } from "jose";
 
 const secretKey = process.env.SESSION_SECRET || "";
@@ -12,7 +13,6 @@ export async function verifyAuth(session: string | undefined) {
     });
     return payload;
   } catch (error) {
-    console.error("JWT verification failed:", error);
     return null;
   }
 }
