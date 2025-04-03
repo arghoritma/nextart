@@ -23,11 +23,11 @@ export const verifySession = cache(async () => {
     .select({ userId: sessions.user_id })
     .from(sessions)
     .where(eq(sessions.id, session.id as string))
-    .get();
+    .execute();
 
-  if (!user) {
+  if (!user?.[0]) {
     return { isAuth: false };
   }
 
-  return { isAuth: true, userId: user?.userId };
+  return { isAuth: true, userId: user[0]?.userId };
 });

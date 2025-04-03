@@ -1,11 +1,11 @@
 "use server";
 
-import { FormState } from "@/libs/definitions"; //
-import { generateUUID } from "@/libs/helper"; //
-import { db, users } from "@/services/db"; //
+import { FormState } from "@/libs/definitions";
+import { generateUUID } from "@/libs/helper";
+import { db, users } from "@/services/db";
 import { eq } from "drizzle-orm";
-import bcrypt from "bcrypt"; //
-import { createSession, deleteSession } from "@/libs/sessions"; //
+import bcrypt from "bcrypt";
+import { createSession, deleteSession } from "@/libs/sessions";
 import { redirect } from "next/navigation";
 import { GoogleSigninPayload } from "@/types";
 
@@ -27,11 +27,11 @@ export async function signup(
 
   try {
     // Check if email already exists
-    const existingUser = await db
+    const [existingUser] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email))
-      .get();
+      .where(eq(users.email, email));
+
     if (existingUser) {
       console.log("Email already exists");
       return {
@@ -44,16 +44,14 @@ export async function signup(
     // Generate unique ID for the user
     const userId = generateUUID();
 
-    // Use transaction for atomic operation
-    await db.transaction(async (trx) => {
-      await trx.insert(users).values({
-        id: userId,
-        email: email,
-        name: name,
-        password_hash: await bcrypt.hash(password, 10),
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
+    // Insert user
+    await db.insert(users).values({
+      id: userId,
+      email: email,
+      name: name,
+      password_hash: await bcrypt.hash(password, 10),
+      created_at: new Date(),
+      updated_at: new Date(),
     });
 
     await createSession(userId);
@@ -62,6 +60,7 @@ export async function signup(
       success: true,
     };
   } catch (error) {
+    console.error(error);
     if (error instanceof Error) {
       if (
         error.message.includes("unique constraint") ||
@@ -95,11 +94,9 @@ export async function signin(
   prev: FormState,
   formData: FormData
 ): Promise<FormState> {
-  // Get form fields
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Validate form fields
   if (!email || !password) {
     return {
       errors: {
@@ -109,14 +106,12 @@ export async function signin(
   }
 
   try {
-    // Find user by email
-    const user = await db
+    const [user] = await db
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .get();
+      .limit(1);
 
-    // If user not found
     if (!user) {
       return {
         errors: {
@@ -125,10 +120,8 @@ export async function signin(
       };
     }
 
-    // Compare passwords
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
-    // If password doesn't match
     if (!passwordMatch) {
       return {
         errors: {
@@ -156,11 +149,11 @@ export async function googleSignin(
 ): Promise<FormState> {
   const { email, name, uid, Avatar } = payload;
   try {
-    const existingUser = await db
+    const [existingUser] = await db
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .get();
+      .limit(1);
 
     if (!existingUser) {
       await db.insert(users).values({

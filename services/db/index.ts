@@ -1,12 +1,14 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import { users } from "./schema/users";
 import { sessions } from "./schema/sessions";
 import { files } from "./schema/files";
 
-const path_db = process.env.DATABASE_PATH!;
-const sqlite = new Database(`${path_db}/database.db`);
-export const db = drizzle(sqlite, { schema: { users, sessions, files } });
+const pool = new Pool({
+  connectionString: process.env.PG_DATABASE_URL!,
+});
+
+export const db = drizzle(pool, { schema: { users, sessions, files } });
 
 // Eksport skema
 export * from "./schema/users";

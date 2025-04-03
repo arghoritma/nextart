@@ -60,7 +60,7 @@ export async function getProfile(): Promise<{
   const session = await verifySession();
 
   try {
-    const user = await db
+    const [user] = await db
       .select({
         name: users.name,
         email: users.email,
@@ -68,8 +68,7 @@ export async function getProfile(): Promise<{
         avatar: users.avatar,
       })
       .from(users)
-      .where(eq(users.id, session.userId as string))
-      .get();
+      .where(eq(users.id, session.userId as string));
 
     if (!user) {
       throw new Error("User not found");
@@ -85,6 +84,7 @@ export async function getProfile(): Promise<{
     };
   }
 }
+
 export async function getAvatar(): Promise<{
   success: boolean;
   data: string;
@@ -100,11 +100,10 @@ export async function getAvatar(): Promise<{
   }
 
   try {
-    const avatar = await db
+    const [avatar] = await db
       .select({ avatar: users.avatar })
       .from(users)
-      .where(eq(users.id, session.userId as string))
-      .get();
+      .where(eq(users.id, session.userId as string));
 
     return {
       success: true,

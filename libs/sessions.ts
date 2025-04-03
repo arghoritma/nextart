@@ -45,7 +45,7 @@ export async function createSession(user_id: string) {
       user_agent: headersList.get("user-agent") || "",
       created_at: new Date(),
       last_accessed: new Date(),
-      is_active: 1,
+      is_active: true,
       expires_at: expiresAt,
     })
     .returning();
@@ -61,6 +61,7 @@ export async function createSession(user_id: string) {
     path: "/",
   });
 }
+
 export async function updateSession() {
   const session = (await cookies()).get("session")?.value;
   const payload = await decrypt(session);
@@ -88,7 +89,7 @@ export async function deleteSession() {
   if (session && payload) {
     await db
       .update(sessions)
-      .set({ is_active: 0 })
+      .set({ is_active: false })
       .where(eq(sessions.id, (payload as { id: string }).id));
   }
 
