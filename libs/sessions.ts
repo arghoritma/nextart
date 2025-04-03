@@ -31,27 +31,22 @@ export async function createSession(user_id: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const headersList = await headers();
 
-  const data = await db
-    .insert(sessions)
-    .values({
-      id: generateUUID(),
-      user_id: user_id,
-      token: "",
-      device: headersList.get("user-agent") || "",
-      ip_address:
-        headersList.get("x-forwarded-for") ||
-        headersList.get("x-real-ip") ||
-        "",
-      user_agent: headersList.get("user-agent") || "",
-      created_at: new Date(),
-      last_accessed: new Date(),
-      is_active: true,
-      expires_at: expiresAt,
-    })
-    .returning();
+  const id = generateUUID();
+  await db.insert(sessions).values({
+    id: id,
+    user_id: user_id,
+    token: "",
+    device: headersList.get("user-agent") || "",
+    ip_address:
+      headersList.get("x-forwarded-for") || headersList.get("x-real-ip") || "",
+    user_agent: headersList.get("user-agent") || "",
+    created_at: new Date(),
+    last_accessed: new Date(),
+    is_active: true,
+    expires_at: expiresAt,
+  });
 
-  const sessionId = data[0].id;
-  const session = await encrypt({ id: sessionId });
+  const session = await encrypt({ id });
   const cookieStore = await cookies();
   cookieStore.set("session", session, {
     httpOnly: true,

@@ -4,9 +4,9 @@ import "dotenv/config";
 export default defineConfig({
   out: "./services/db/migrations",
   schema: "./services/db/schema/*.ts",
-  dialect: "postgresql",
+  dialect: "mysql",
   dbCredentials: {
-    url: process.env.PG_DATABASE_URL!,
+    url: process.env.MYSQL_DATABASE_URL!,
   },
   verbose: true,
 });
