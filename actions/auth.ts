@@ -1,6 +1,6 @@
 "use server";
 
-import { SignupFormSchema, FormState } from "@/libs/definitions"; //
+import { FormState } from "@/libs/definitions"; //
 import { generateUUID } from "@/libs/helper"; //
 import { db, users } from "@/services/db"; //
 import { eq } from "drizzle-orm";
@@ -13,24 +13,19 @@ export async function signup(
   prev: FormState,
   formData: FormData
 ): Promise<FormState> {
-  // Validate form fields
-  const validatedFields = SignupFormSchema.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
-  // If any form fields are invalid, return early
-  if (!validatedFields.success) {
+  if (!name || !email || !password) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: {
+        _form: ["Please fill all required fields"],
+      },
     };
   }
 
   try {
-    const { name, email, password } = validatedFields.data;
-    console.log("name", name);
-
     // Check if email already exists
     const existingUser = await db
       .select()
@@ -62,7 +57,10 @@ export async function signup(
     });
 
     await createSession(userId);
-    redirect("/dashboard");
+
+    return {
+      success: true,
+    };
   } catch (error) {
     if (error instanceof Error) {
       if (
@@ -140,7 +138,9 @@ export async function signin(
     }
 
     await createSession(user.id);
-    redirect("/dashboard");
+    return {
+      success: true,
+    };
   } catch (error) {
     console.error("Error during sign in:", error);
     return {
@@ -151,7 +151,9 @@ export async function signin(
   }
 }
 
-export async function googleSignin(payload: GoogleSigninPayload) {
+export async function googleSignin(
+  payload: GoogleSigninPayload
+): Promise<FormState> {
   const { email, name, uid, Avatar } = payload;
   try {
     const existingUser = await db
@@ -172,7 +174,9 @@ export async function googleSignin(payload: GoogleSigninPayload) {
       });
     }
     await createSession(uid);
-    redirect("/dashboard");
+    return {
+      success: true,
+    };
   } catch (error) {
     console.error("Error during Google sign-in:", error);
     return {

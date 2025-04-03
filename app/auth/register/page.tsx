@@ -9,7 +9,6 @@ export default function Register() {
       <div className="max-w-md w-full space-y-8 border rounded-lg p-8 transform transition-all hover:scale-[1.01]">
         <div className="text-center">
           <h2 className="text-4xl font-bold mb-2">Create Account</h2>
-          <p>Join us and start managing your tasks!</p>
         </div>
         <div className="space-y-4">
           <GoogleLogin />

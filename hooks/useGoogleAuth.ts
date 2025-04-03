@@ -5,11 +5,13 @@ import { googleSignin } from "@/actions/auth";
 import { GoogleSigninPayload } from "@/types";
 
 export function useGoogleAuth() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string[]>([]);
 
   const googleLogin = async () => {
     setLoading(true);
+    const avatarUrl = "https://ui-avatars.com/api/?name=";
     try {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
@@ -18,12 +20,16 @@ export function useGoogleAuth() {
         email: user.email,
         name: user.displayName,
         uid: user.uid,
-        Avatar:
-          user.photoURL ||
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa6YvRump6DC1zR3Bu5fz9358Gcgviuu5nag&s",
+        Avatar: user.photoURL || `${avatarUrl}${user.displayName}`,
       };
 
-      await googleSignin(payload as GoogleSigninPayload);
+      const actionLogin = await googleSignin(payload as GoogleSigninPayload);
+
+      if (actionLogin.success) {
+        setSuccess(true);
+      } else {
+        setError(actionLogin.errors?._form || ["An unknown error occurred"]);
+      }
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError([error.message]);
@@ -35,5 +41,5 @@ export function useGoogleAuth() {
     }
   };
 
-  return { loading, error, googleLogin };
+  return { loading, error, success, googleLogin };
 }

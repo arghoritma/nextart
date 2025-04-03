@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
-import { AlertCircle, Eye, EyeOff, LogIn, Mail } from "lucide-react";
+import React, { useActionState, useState, useEffect } from "react";
+import { AlertCircle, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { signin } from "@/actions/auth";
 import { FormState } from "@/libs/definitions";
+import { redirect } from "next/navigation";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +15,12 @@ export default function LoginForm() {
   };
 
   const [state, actionLogin, isPending] = useActionState(signin, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      redirect("/dashboard");
+    }
+  }, [state]);
 
   return (
     <form className="mt-8 space-y-6" action={actionLogin}>
@@ -52,7 +59,7 @@ export default function LoginForm() {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <LogIn className="h-5 w-5 text-muted-foreground" />
+              <Lock className="h-5 w-5 text-muted-foreground" />
             </div>
             <input
               id="password"

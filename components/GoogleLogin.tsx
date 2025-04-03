@@ -1,8 +1,16 @@
 "use client";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
+import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
 export default function GoogleLogin() {
-  const { googleLogin, loading } = useGoogleAuth();
+  const { googleLogin, loading, success } = useGoogleAuth();
+  useEffect(() => {
+    if (success) {
+      redirect("/dashboard");
+    }
+  }, [success]);
+
   return (
     <button
       onClick={googleLogin}
