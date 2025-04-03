@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/libs/auth-middleware";
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = ["/dashboard", "/api"];
 const publicRoutes = ["/auth/login", "/auth/register", "/"];
 
 export async function middleware(req: NextRequest) {
@@ -17,6 +17,12 @@ export async function middleware(req: NextRequest) {
   const payload = await verifyAuth(session);
 
   if (isProtectedRoute && !payload) {
+    if (path.startsWith("/api")) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
@@ -28,5 +34,7 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  // Match all routes except for static files and images
+  matcher: ["/((?!_next/static|_next/image|.*\\.png$).*)"],
+  //matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"], // Match all routes except for api routes and static files
 };
