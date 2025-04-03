@@ -12,6 +12,7 @@ export async function verifyAuth(session: string | undefined) {
     });
     return payload;
   } catch (error) {
+    console.error("JWT verification failed:", error);
     return null;
   }
 }
