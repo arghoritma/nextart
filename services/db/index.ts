@@ -5,7 +5,7 @@ import { sessions } from "./schema/sessions";
 import { files } from "./schema/files";
 
 const path_db = process.env.DATABASE_PATH!;
-const sqlite = new Database(`${path_db}/database.db`);
+const sqlite = new Database(`${path_db}/${process.env.NODE_ENV}.db`);
 export const db = drizzle(sqlite, { schema: { users, sessions, files } });
 
 // Eksport skema
