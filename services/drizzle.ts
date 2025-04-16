@@ -1,8 +1,8 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import { users } from "./schema/users";
-import { sessions } from "./schema/sessions";
-import { files } from "./schema/files";
+import { users } from "@/schemas/users";
+import { sessions } from "@/schemas/sessions";
+import { files } from "@/schemas/files";
 
 const pool = new Pool({
   connectionString: process.env.PG_DATABASE_URL!,
@@ -11,6 +11,6 @@ const pool = new Pool({
 export const db = drizzle(pool, { schema: { users, sessions, files } });
 
 // Eksport skema
-export * from "./schema/users";
-export * from "./schema/sessions";
-export * from "./schema/files";
+export * from "@/schemas/users";
+export * from "@/schemas/sessions";
+export * from "@/schemas/files";

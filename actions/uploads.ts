@@ -2,7 +2,7 @@
 
 import { writeFile } from "fs/promises";
 import path from "path";
-import { db, users, files } from "@/services/db";
+import { db, users, files } from "@/services/drizzle";
 import { eq } from "drizzle-orm";
 import { verifySession } from "@/libs/dal";
 import { generateUUID } from "@/libs/helper";

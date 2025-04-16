@@ -1,6 +1,6 @@
 "use server";
 
-import { db, files } from "@/services/db";
+import { db, files } from "@/services/drizzle";
 import { desc } from "drizzle-orm";
 
 export async function getFiles() {
