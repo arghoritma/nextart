@@ -24,6 +24,6 @@ export const sessions = mysqlTable("sessions", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   expires_at: timestamp("expires_at").default(
-    sql`DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)`
+    sql`(CURRENT_TIMESTAMP + INTERVAL 1 HOUR)`
   ),
 });

@@ -1,7 +1,7 @@
 import "server-only";
 import { eq } from "drizzle-orm";
 import { SignJWT, jwtVerify } from "jose";
-import { db, sessions } from "@/services/db";
+import { db, sessions } from "@/services/drizzle";
 import { generateUUID } from "./helper";
 import { headers, cookies } from "next/headers";
 
