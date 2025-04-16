@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
 import { decrypt } from "@/libs/sessions";
 import { cache } from "react";
-import { db, sessions } from "@/services/db";
+import { db, sessions } from "@/services/drizzle";
 
 export const verifySession = cache(async () => {
   const header = (await headers()).get("X-User-Session");

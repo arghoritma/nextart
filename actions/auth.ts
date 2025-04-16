@@ -2,7 +2,7 @@
 
 import { FormState } from "@/libs/definitions"; //
 import { generateUUID } from "@/libs/helper"; //
-import { db, users } from "@/services/db"; //
+import { db, users } from "@/services/drizzle"; //
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt"; //
 import { createSession, deleteSession } from "@/libs/sessions"; //

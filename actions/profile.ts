@@ -2,7 +2,7 @@
 
 import { verifySession } from "@/libs/dal";
 import { FormState, UserProp } from "@/libs/definitions";
-import { db, users } from "@/services/db";
+import { db, users } from "@/services/drizzle";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 
@@ -58,7 +58,7 @@ export async function getProfile(): Promise<{
   error: Error | null;
 }> {
   const session = await verifySession();
-
+  
   try {
     const user = await db
       .select({
@@ -85,6 +85,7 @@ export async function getProfile(): Promise<{
     };
   }
 }
+
 export async function getAvatar(): Promise<{
   success: boolean;
   data: string;
