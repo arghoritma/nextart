@@ -181,6 +181,6 @@ export async function googleSignin(
 }
 
 export async function logout() {
-  deleteSession();
-  redirect("/auth/login");
+  await deleteSession() 
+  redirect("/login")
 }
