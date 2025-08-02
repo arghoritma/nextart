@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "storage": "node storage_server.js",
-    "migrate:up": "drizzle-kit up",
-    "migrate:generate": "drizzle-kit generate",
-    "migrate:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate",
+    "db:reset": "rm -rf drizzle/migrations && rm -f drizzle/db/*.db && drizzle-kit push"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
@@ -21,11 +22,11 @@
     "firebase": "^11.4.0",
     "firebase-admin": "^13.2.0",
     "jose": "^6.0.8",
-    "live-server": "^1.2.2",
     "lucide-react": "^0.482.0",
     "next": "^15.4.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "ultimate-express": "^2.0.9",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
