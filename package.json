@@ -8,9 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "storage": "node storage_server.js",
-    "migrate:up": "drizzle-kit up",
-    "migrate:generate": "drizzle-kit generate",
-    "migrate:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
@@ -24,7 +24,7 @@
     "live-server": "^1.2.2",
     "lucide-react": "^0.482.0",
     "next": "^15.3.0",
-    "pg": "^8.14.1",
+    "pg": "^8.16.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "uuid": "^11.1.0",

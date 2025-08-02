@@ -6,6 +6,7 @@ import { db, users } from "@/services/drizzle";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 
+
 export async function updateProfile(
   prev: FormState,
   formData: FormData
@@ -58,6 +59,15 @@ export async function getProfile(): Promise<{
   error: Error | null;
 }> {
   const session = await verifySession();
+
+  if (!session.isAuth) {
+
+    return {
+      success: false,
+      data: {} as UserProp,
+      error: new Error("User not authenticated"),
+    };
+  }
 
   try {
     const [user] = await db
